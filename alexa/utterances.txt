@@ -1,0 +1,20 @@
+GetOrders get my orders
+GetOrders show my orders
+GetOrders get my order
+GetOrders show my order
+GetOrders get my order status
+GetOrders show my order status
+LowerPrice lower the price of my order
+LowerPrice lower my price of my order
+LowerPrice lower the price for my order
+LowerPrice lower my price for my order
+LowerPrice lower my price
+LowerPrice decrease price
+LowerPrice decrease my price
+RaisePrice increase the price of my order
+RaisePrice increase my price of my order
+RaisePrice increase the price for my order
+RaisePrice raise my price for my order
+RaisePrice raise my price
+RaisePrice increase price
+RaisePrice increase my price

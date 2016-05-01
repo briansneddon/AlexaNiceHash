@@ -1,0 +1,13 @@
+{
+  "intents": [
+    {
+      "intent": "GetOrders"
+    },
+    {
+      "intent": "LowerPrice"
+    },
+    {
+      "intent": "RaisePrice"
+    }
+  ]
+}
