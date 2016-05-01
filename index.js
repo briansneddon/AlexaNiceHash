@@ -1,6 +1,8 @@
+var config = require('config.js');
 var https = require('https');
-var api_id = "35748";
-var api_key = "26294e43-2a8f-4674-91f5-325b1930265d";
+var async = require('async');
+var api_id = config.api_id;
+var api_key = config.api_key;
 var api_url = "https://www.nicehash.com/api?method=";
 
 exports.handler = function (event, context) {
@@ -23,6 +25,7 @@ function routeIntent(intent,callback) {
 }
 
 function httpsRequest(url,callback) {
+	console.log("URL: "+url);
   https.get(url,function(response) {
     var body = "";
     response.on('data', function(data) {
@@ -30,17 +33,98 @@ function httpsRequest(url,callback) {
     });
 
     response.on('end', function() {
-      callback(JSON.parse(body));
+	    console.log("Body: "+body);
+      callback(null,JSON.parse(body));
     });
   });
 }
 function doGetOrders(intent,callback) {
-  var request_url = api_url+"orders.get&my&id="+api_id+"&key="+api_key+"&location=0&algo=1";
-  httpsRequest(request_url,function(result) {
-    var replySpeech = "Your order "+result.result.orders[0].id+"is running at "+Number(result.result.orders[0].accepted_speed / 1000).toFixed(2) +" terrahashes per second with "+result.result.orders[0].workers+" workers";
-    callback(replySpeech,true); 
-  });
+	console.log("Got to doGetOrders");
+//  var request_url = api_url+"orders.get&my&id="+api_id+"&key="+api_key+"&location=0&algo=1";
+  async.waterfall([
+    function(next) {
+      var request_url = api_url+"orders.get&my&id="+api_id+"&key="+api_key+"&location=0&algo=1";
+      httpsRequest(request_url,next);
+    }],
+    function(err,result) {
+      if (err) {
+        console.log("Error: "+err, err.stack);
+      } else {
+	console.log("Result1: "+result);
+        var replySpeech = "Your order "+result.result.orders[0].id+"is running at "+Number(result.result.orders[0].accepted_speed / 1000).toFixed(2) +" terahashes per second with "+result.result.orders[0].workers+" workers.  Your cost per terahash per day is "+result.result.orders[0].price+" bitcoins.";
+        callback(replySpeech,true);
+      }
+    });
 }
+
+function doLowerPrice(intent,callback) {
+  var order_id="";
+  async.waterfall([
+    function(next) {
+      var request_url = api_url+"orders.get&my&id="+api_id+"&key="+api_key+"&location=0&algo=1";
+      httpsRequest(request_url,next);
+    },
+    function(result,next) {
+      order_id = result.result.orders[0].id;
+      var request_url = api_url+"orders.set.price.decrease&id="+api_id+"&key="+api_key+"&location=0&algo=1&order="+order_id;
+      httpsRequest(request_url,next);
+    }],
+    function(err,result) {
+      var replySpeech = "";
+      if (err) {
+        replySpeech = "There was a system error while attempting to lower your price.";
+	console.log("Error: "+err);
+      } else {
+        if (result.result.success) {
+          replySpeech = "Order "+order_id+" price has been lowered. "+result.result.success;
+	} else if (result.result.error) {
+	  replySpeech = "Order "+order_id+" price could not be changed at this time. "+result.result.error;
+	} else {
+	  replySpeech = "Order "+order_id+" price could not be changed at this time.";
+	  console.log("Result: "+result);
+	}
+      }
+
+      callback(replySpeech,true);
+    });
+}
+
+function doRaisePrice(intent,callback) {
+  var order_id="";
+
+  async.waterfall([
+    function(next) {
+      var request_url = api_url+"orders.get&my&id="+api_id+"&key="+api_key+"&location=0&algo=1";
+      httpsRequest(request_url,next);
+    },
+    function(result,next) {
+      order_id = result.result.orders[0].id;
+      var old_price = result.result.orders[0].price;
+      var new_price = Number(old_price) + Number(0.0001);
+      console.log("Price increase from "+old_price+" to "+new_price);
+      var request_url = api_url+"orders.set.price&id="+api_id+"&key="+api_key+"&location=0&algo=1&order="+order_id+"&price="+new_price;
+      httpsRequest(request_url,next);
+    }],
+    function(err,result) {
+      var replySpeech = "";
+      if (err) {
+        replySpeech = "There was a system error while attempting to raise your price.";
+        console.log("Error: "+err);
+      } else {
+        if (result.result.success) {
+          replySpeech = "Order "+order_id+" price has been raised. "+result.result.success;
+        } else if (result.result.error) {
+          replySpeech = "Order "+order_id+" price could not be changed at this time. "+result.result.error;
+        } else {
+          replySpeech = "Order "+order_id+" price could not be changed at this time.";
+          console.log("Result: "+result);
+        }
+      }
+
+      callback(replySpeech,true);
+    });
+}
+
 
 function speakReply(replySpeech,shouldEndSession) {
     return {
