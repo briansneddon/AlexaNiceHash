@@ -1,6 +1,6 @@
 # AlexaNiceHash
 
-This project adds a skill to Alexa that allows you to query or modify your NiceHash order.  It's currently only intended for Bitcoin orders in the NiceHash location.
+This project adds a skill to Alexa that allows you to query or modify your NiceHash order.  It's currently only intended for Bitcoin orders in either the NiceHash or WestHash locations.
 
 ## Configuration
 This skill currently expects to be run in test mode using an Echo registered to your development account.  The code is designed to be uploaded as an AWS Lambda function. 
@@ -17,8 +17,8 @@ module.exports = config
 Where xxx is changed to your NiceHash API id and key
 
 ## TODO
-* Support multiple locations (orders in WestHash not yet supported)
-* Support multiple orders
+* Support multiple orders when increasing/decreasing
 * Allow specification of price when increasing
+* Add conversational functionality where helpful
 
 
