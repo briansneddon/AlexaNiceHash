@@ -1,0 +1,12 @@
+{
+  "name": "AlexaNiceHash",
+  "description": "Alexa integration for NiceHash",
+  "version": "0.0.1",
+  "repository" : { 
+    "type" : "git", 
+    "url" : "https://github.com/briansneddon/AlexaNiceHash"
+  },
+  "dependencies": {
+    "async": "latest"
+  }
+}
