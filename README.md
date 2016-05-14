@@ -16,6 +16,8 @@ module.exports = config
 
 Where xxx is changed to your NiceHash API id and key
 
+Dependencies must be installed using ```npm install``` before deploying.
+
 ## TODO
 * Support multiple orders when increasing/decreasing
 * Allow specification of price when increasing
