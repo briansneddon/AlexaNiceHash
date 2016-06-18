@@ -86,7 +86,7 @@ function doGetOrders(intent,callback) {
     }
     console.log("Orders: "+JSON.stringify(orders));
     for (var order of orders) {
-      replySpeech += "Your order "+order.id+"is running at "+Number(order.accepted_speed / 1000).toFixed(2) +" terahashes per second with "+order.workers+" workers.  Your cost per terahash per day is "+order.price+" bitcoins. ";
+      replySpeech += "Your order "+order.id+"is running at "+Number(order.accepted_speed / 1000).toFixed(2) +" terahashes per second with "+order.workers+" workers.  Your cost per terahash per day is "+order.price+" millibitcoins. ";
     }
     callback(replySpeech,true);
   });
